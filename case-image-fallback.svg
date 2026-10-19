@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1100" role="img" aria-label="Costume phone case illustration">
+  <defs>
+    <linearGradient id="paper" x2="1" y2="1"><stop stop-color="#eee9df"/><stop offset="1" stop-color="#d8d1c4"/></linearGradient>
+    <linearGradient id="case" x2=".9" y2="1"><stop stop-color="#536c59"/><stop offset="1" stop-color="#283c30"/></linearGradient>
+    <filter id="shadow" x="-.4" y="-.3" width="1.8" height="1.8"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="900" height="1100" fill="url(#paper)"/>
+  <circle cx="760" cy="210" r="205" fill="#dd704e" opacity=".16"/>
+  <circle cx="150" cy="920" r="250" fill="#70836d" opacity=".16"/>
+  <ellipse cx="468" cy="895" rx="245" ry="75" fill="#353b31" opacity=".23" filter="url(#shadow)"/>
+  <g transform="rotate(-9 450 540)">
+    <rect x="258" y="140" width="384" height="740" rx="68" fill="#252824"/>
+    <rect x="273" y="155" width="354" height="710" rx="55" fill="url(#case)"/>
+    <rect x="296" y="179" width="132" height="132" rx="30" fill="#26352c"/>
+    <circle cx="333" cy="218" r="20" fill="#171c18" stroke="#829181" stroke-width="4"/>
+    <circle cx="385" cy="218" r="20" fill="#171c18" stroke="#829181" stroke-width="4"/>
+    <circle cx="333" cy="270" r="20" fill="#171c18" stroke="#829181" stroke-width="4"/>
+    <path d="M390 640c-65-91-57-184 30-263 2 99 47 165 115 198-36 59-85 82-145 65Z" fill="#d97855" opacity=".94"/>
+    <path d="M403 637c31-68 66-119 113-172M438 590l-53-46m83 2 49 10m-110 82-18 39" fill="none" stroke="#f2c9a2" stroke-width="9" stroke-linecap="round"/>
+    <circle cx="491" cy="422" r="13" fill="#f2c9a2"/>
+    <path d="M305 783h290" stroke="#d9dfd2" stroke-opacity=".26" stroke-width="2"/>
+  </g>
+  <text x="450" y="1010" text-anchor="middle" fill="#344c3d" font-family="Arial,sans-serif" font-size="22" letter-spacing="7">COSTUME · CASE PREVIEW</text>
+</svg>

@@ -1,0 +1,140 @@
+<!-- Store-manager snippet for the Costume storefront.
+     It expects PRODUCTS, renderProducts(), money(), and the existing #filters element. -->
+<style>
+  .owner-entry{opacity:.65;font-size:10px}
+  .owner-panel{position:fixed;inset:0;z-index:40;background:#1d211dcc;display:none;place-items:center;padding:16px}
+  .owner-panel.open{display:grid}
+  .owner-box{background:#f6f3ed;width:min(760px,100%);max-height:92vh;overflow:auto;padding:28px;position:relative;color:#22221f;font:14px Arial,sans-serif}
+  .owner-box h2{font:500 34px Georgia,serif;margin:8px 0}
+  .owner-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .owner-grid label{font-size:10px;display:grid;gap:6px;color:#77766f}
+  .owner-grid input,.owner-grid textarea{width:100%;padding:11px;border:1px solid #dedbd3;background:white;color:#22221f}
+  .owner-grid textarea{min-height:80px}
+  .owner-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:16px}
+  .owner-actions button,.owner-actions label{padding:12px 16px;border:1px solid #344c3d;background:#344c3d;color:white;cursor:pointer;font-size:11px}
+  .owner-actions .light{background:transparent;color:#22221f}
+  .owner-list{display:grid;gap:7px;margin:14px 0}
+  .owner-item{display:flex;justify-content:space-between;align-items:center;padding:10px;background:#ebe7de}
+  .owner-item button{border:0;background:none;text-decoration:underline;cursor:pointer}
+  .owner-note{font-size:11px;line-height:1.7;color:#69685f;background:#ebe7de;padding:12px;margin-top:14px}
+  @media(max-width:600px){.owner-grid{grid-template-columns:1fr}.owner-box{padding:22px}}
+</style>
+
+<!-- Place this link in the footer -->
+<a href="#" id="openOwner" class="owner-entry">Store owner · manage products</a>
+
+<!-- Place this dialog before the page's main script -->
+<section class="owner-panel" id="ownerPanel" role="dialog" aria-modal="true" aria-label="Store product manager">
+  <div class="owner-box">
+    <button type="button" id="closeOwner" style="float:right;border:0;background:none;font-size:24px;cursor:pointer" aria-label="Close">×</button>
+    <small>STORE OWNER</small><h2>Manage your products</h2>
+    <p class="owner-note">Preview tool: changes are saved in this browser only. There is no owner password. Manage a live Shopify catalog in Shopify Admin.</p>
+    <div class="owner-list" id="ownerList"></div>
+    <form id="ownerForm">
+      <input id="ownerId" type="hidden">
+      <div class="owner-grid">
+        <label>Product name<input id="ownerName" required maxlength="80"></label>
+        <label>Category<input id="ownerCategory" required maxlength="40" placeholder="Floral, Minimal…"></label>
+        <label>Price<input id="ownerPrice" type="number" min="0" step="0.01" required></label>
+        <label>Badge / tag<input id="ownerTag" maxlength="30" placeholder="New, Bestseller…"></label>
+        <label>Image URL or local path<input id="ownerImage" required placeholder="images/my-case.jpg"></label>
+        <label>Colours, separated by commas<input id="ownerColors" required placeholder="Black, Sage, Rose"></label>
+        <label style="grid-column:1/-1">Description<textarea id="ownerDesc" required maxlength="400"></textarea></label>
+      </div>
+      <div class="owner-actions">
+        <button type="submit">SAVE PRODUCT</button>
+        <button class="light" type="button" id="newOwnerProduct">NEW PRODUCT</button>
+        <button class="light" type="button" id="exportOwnerProducts">EXPORT BACKUP</button>
+        <label class="light" for="importOwnerProducts">IMPORT BACKUP<input hidden type="file" id="importOwnerProducts" accept="application/json"></label>
+      </div>
+    </form>
+  </div>
+</section>
+
+<script>
+  // Keep this script AFTER the storefront's main script so PRODUCTS and renderProducts() exist.
+  try {
+    const saved = JSON.parse(localStorage.getItem('costumeOwnerProducts') || 'null');
+    if (Array.isArray(saved)) PRODUCTS = saved;
+  } catch {}
+
+  function ownerRefresh() {
+    try { localStorage.setItem('costumeOwnerProducts', JSON.stringify(PRODUCTS)); }
+    catch { alert('Could not save. Please use shorter image URLs or export a backup.'); }
+    const active = document.querySelector('.filter.active')?.dataset.filter || 'All';
+    const categories = ['All', ...new Set(PRODUCTS.map(p => p.category))];
+    document.querySelector('#filters').innerHTML = categories.map(c =>
+      `<button class="filter ${c === active ? 'active' : ''}" data-filter="${c}">${c}</button>`
+    ).join('');
+    renderProducts();
+    document.querySelector('#ownerList').innerHTML = PRODUCTS.map(p =>
+      `<div class="owner-item"><span><strong>${p.name}</strong> · ${money(p.price)}</span>
+       <span><button type="button" data-owner-edit="${p.id}">Edit</button>
+       <button type="button" data-owner-delete="${p.id}">Delete</button></span></div>`
+    ).join('') || '<p>No products yet. Add your first one below.</p>';
+  }
+
+  function ownerClear() {
+    ['ownerId','ownerName','ownerCategory','ownerPrice','ownerTag','ownerImage','ownerColors','ownerDesc']
+      .forEach(id => document.getElementById(id).value = '');
+  }
+
+  document.querySelector('#openOwner').addEventListener('click', e => {
+    e.preventDefault(); ownerRefresh(); document.querySelector('#ownerPanel').classList.add('open');
+  });
+  document.querySelector('#closeOwner').addEventListener('click', () => document.querySelector('#ownerPanel').classList.remove('open'));
+  document.querySelector('#ownerPanel').addEventListener('click', e => {
+    if (e.target.id === 'ownerPanel') e.currentTarget.classList.remove('open');
+  });
+  document.querySelector('#newOwnerProduct').addEventListener('click', ownerClear);
+  document.querySelector('#ownerList').addEventListener('click', e => {
+    const edit = e.target.closest('[data-owner-edit]');
+    if (edit) {
+      const p = PRODUCTS.find(x => x.id === edit.dataset.ownerEdit);
+      if (p) {
+        document.querySelector('#ownerId').value = p.id;
+        document.querySelector('#ownerName').value = p.name;
+        document.querySelector('#ownerCategory').value = p.category;
+        document.querySelector('#ownerPrice').value = p.price;
+        document.querySelector('#ownerTag').value = p.tag || '';
+        document.querySelector('#ownerImage').value = p.image;
+        document.querySelector('#ownerColors').value = p.colors.join(', ');
+        document.querySelector('#ownerDesc').value = p.desc;
+      }
+    }
+    const del = e.target.closest('[data-owner-delete]');
+    if (del && confirm('Remove this product from the collection?')) {
+      PRODUCTS = PRODUCTS.filter(x => x.id !== del.dataset.ownerDelete); ownerRefresh(); ownerClear();
+    }
+  });
+  document.querySelector('#ownerForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.querySelector('#ownerId').value || `case-${Date.now()}`;
+    const product = {
+      id, name: document.querySelector('#ownerName').value.trim(),
+      category: document.querySelector('#ownerCategory').value.trim(),
+      price: Number(document.querySelector('#ownerPrice').value),
+      tag: document.querySelector('#ownerTag').value.trim() || 'Everyday',
+      image: document.querySelector('#ownerImage').value.trim(),
+      colors: document.querySelector('#ownerColors').value.split(',').map(x => x.trim()).filter(Boolean),
+      desc: document.querySelector('#ownerDesc').value.trim()
+    };
+    const index = PRODUCTS.findIndex(x => x.id === id);
+    if (index < 0) PRODUCTS.push(product); else PRODUCTS[index] = product;
+    ownerRefresh(); ownerClear();
+  });
+  document.querySelector('#exportOwnerProducts').addEventListener('click', () => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(PRODUCTS, null, 2)], {type:'application/json'}));
+    a.download = 'costume-products-backup.json'; a.click(); URL.revokeObjectURL(a.href);
+  });
+  document.querySelector('#importOwnerProducts').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (!Array.isArray(data) || !data.every(p => p.id && p.name && p.category && Array.isArray(p.colors))) throw Error();
+      PRODUCTS = data; ownerRefresh(); ownerClear();
+    } catch { alert('This backup file is not a valid product list.'); }
+    e.target.value = '';
+  });
+</script>

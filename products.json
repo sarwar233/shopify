@@ -1,0 +1,55 @@
+{
+  "products": [
+    {
+      "id": "glass-silver",
+      "name": "Glass Case — Silver",
+      "category": "Glass Cases",
+      "model": "All listed iPhone models",
+      "price": 25,
+      "image": "images/iphone-glass-silver.jpeg",
+      "description": "Silver glass-finish case for iPhone. Free delivery.",
+      "colour": "Silver"
+    },
+    {
+      "id": "glass-blue",
+      "name": "Glass Case — Ocean Blue",
+      "category": "Glass Cases",
+      "model": "All listed iPhone models",
+      "price": 25,
+      "image": "images/iphone-glass-blue.jpeg",
+      "description": "Ocean Blue glass-finish case for iPhone. Free delivery.",
+      "colour": "Ocean Blue"
+    },
+    {
+      "id": "glass-titanium",
+      "name": "Glass Case — Titanium",
+      "category": "Glass Cases",
+      "model": "All listed iPhone models",
+      "price": 25,
+      "image": "images/iphone-glass-titanium.jpeg",
+      "description": "Titanium glass-finish case for iPhone. Free delivery.",
+      "colour": "Titanium"
+    },
+    {
+      "id": "glass-bronze",
+      "name": "Glass Case — Bronze",
+      "category": "Glass Cases",
+      "model": "All listed iPhone models",
+      "price": 25,
+      "image": "images/iphone-glass-bronze.jpeg",
+      "description": "Bronze glass-finish case for iPhone. Free delivery.",
+      "colour": "Bronze"
+    },
+    {
+      "id": "glass-purple",
+      "name": "Glass Case — Purple",
+      "category": "Glass Cases",
+      "model": "All listed iPhone models",
+      "price": 25,
+      "image": "images/iphone-glass-purple.jpeg",
+      "description": "Purple glass-finish case for iPhone. Free delivery.",
+      "colour": "Purple"
+    }
+  ],
+  "links": []
+}
